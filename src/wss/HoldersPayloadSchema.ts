@@ -1,0 +1,20 @@
+import { z } from 'zod';
+import type { HoldersStreamNewTokenPayload } from '../utils/schemas/EnrichedHoldersData.ts';
+
+export const HoldersPayloadSchema = z.object({
+  tokens: z.array(
+    z.object({
+      address: z.string(),
+      blockchain: z.string(),
+    }),
+  ),
+  subscriptionId: z.string().optional(),
+  subscriptionTracking: z
+    .union([z.boolean(), z.string()])
+    .default(false)
+    .transform((val) => (typeof val === 'string' ? val === 'true' : val)),
+});
+
+export type HoldersPayloadType = z.input<typeof HoldersPayloadSchema>;
+
+export type WssHoldersResponse = { data: z.infer<typeof HoldersStreamNewTokenPayload>; subscriptionId: string };

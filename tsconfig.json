@@ -1,0 +1,4 @@
+{
+  "extends": "@mobula/tsconfig/nestjs-library.json",
+  "include": ["src/index.ts"]
+}

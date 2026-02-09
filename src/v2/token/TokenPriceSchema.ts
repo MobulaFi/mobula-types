@@ -1,0 +1,48 @@
+import { z } from 'zod';
+
+/**
+ * V2 Token Price Schema
+ * Same pattern as Token Details - single address/blockchain for GET, items array for POST
+ */
+
+// Single item params (for GET and batch items)
+const TokenPriceItemParams = z.object({
+  blockchain: z.string().optional(),
+  address: z.string().optional(),
+});
+
+export const TokenPriceParamsSchema = TokenPriceItemParams;
+
+export const TokenPriceBatchParamsSchema = z.union([
+  z.array(TokenPriceItemParams),
+  z.object({
+    items: z.array(TokenPriceItemParams),
+  }),
+]);
+
+export type TokenPriceParams = z.input<typeof TokenPriceParamsSchema>;
+export type TokenPriceBatchParams = z.input<typeof TokenPriceBatchParamsSchema>;
+
+// Response item with USD suffix naming convention
+const TokenPriceItemResponseSchema = z.object({
+  name: z.string().nullable(),
+  symbol: z.string().nullable(),
+  logo: z.string().nullable(),
+  priceUSD: z.number().nullable(),
+  marketCapUSD: z.number().nullable(),
+  marketCapDilutedUSD: z.number().nullable(),
+  liquidityUSD: z.number().nullable(),
+  liquidityMaxUSD: z.number().nullable(),
+});
+
+export const TokenPriceResponseSchema = z.object({
+  data: TokenPriceItemResponseSchema,
+});
+
+export const TokenPriceBatchResponseSchema = z.object({
+  payload: z.array(TokenPriceItemResponseSchema.or(z.object({ error: z.string().optional() })).nullable()),
+});
+
+export type TokenPriceResponse = z.infer<typeof TokenPriceResponseSchema>;
+export type TokenPriceBatchResponse = z.infer<typeof TokenPriceBatchResponseSchema>;
+export type TokenPriceItem = z.infer<typeof TokenPriceItemResponseSchema>;

@@ -1,0 +1,26 @@
+import { z } from 'zod';
+
+export const FundingPayloadSchema = z.object({
+  symbol: z.string(),
+  quote: z.string().optional(),
+  exchange: z
+    .string()
+    .optional()
+    .transform((val) => {
+      const validExchanges = ['binance', 'bybit', 'hyperliquid', 'deribit', 'okx', 'gate', 'lighter'];
+
+      if (!val) return validExchanges;
+
+      const requestedExchanges = val
+        .split(',')
+        .map((ex) => ex.trim().toLowerCase())
+        .filter((ex) => validExchanges.includes(ex));
+
+      return requestedExchanges.length > 0 ? requestedExchanges : validExchanges;
+    }),
+  interval: z.number().optional().default(5),
+  subscriptionId: z.string().optional(),
+  subscriptionTracking: z.string().optional(),
+});
+
+export type FundingPayloadType = z.input<typeof FundingPayloadSchema>;

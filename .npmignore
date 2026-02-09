@@ -1,0 +1,5 @@
+*.map
+src/
+build.ts
+tsconfig*.json
+*.test.ts
